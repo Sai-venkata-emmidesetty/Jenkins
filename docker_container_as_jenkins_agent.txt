@@ -1,0 +1,70 @@
+question :
+-----------
+
+Can we have a jenkins agent which is a docker container and run our test inside the docker container?
+
+answer: Yes, you can absolutely use a Docker container as a Jenkins agent to run your tests.
+---------
+
+1) This is used for isolation of the pipeline steps
+2)Here the code is expected to run inside a docker container which can use a custom test image if required
+3)This is the best way to perform testing without having every Jenkins agent needing to have packages installed
+
+Jenkinsfile (Declarative Pipeline)
+--------------------------------------------
+pipeline {
+    agent {
+        docker { image 'node:16.13.1-alpine' }
+    }
+    stages {
+        stage('Test') {
+            steps {
+                sh 'node --version'
+            }
+        }
+    }
+}
+
+------------------------------------------------end--------------------------------
+
+agent {
+    docker { image 'node:16.13.1-alpine' }
+}
+
+This block specifies the agent or executor that will run the pipeline.
+In this case, a Docker container with the image node:16.13.1-alpine is used. 
+This image provides a Node.js environment for running the script.
+*******************************************************************************
+Stages Definition:
+
+stages {
+    stage('Test') {
+        // ...
+    }
+}
+
+This block defines a stage named 'Test'. Stages are used to group steps logically.
+********************************************************************************
+4. Stage Steps:
+
+Groovy
+steps {
+    sh 'node --version'
+}
+
+
+This block contains the steps to be executed within the 'Test' stage.
+The sh step executes a shell command.
+Here, node --version is executed to print the Node.js version installed in the Docker container.
+*****************************************************************************************
+In summary:
+
+A Jenkins pipeline is created.
+A Docker container with Node.js 16.13.1 is used as the execution environment.
+A stage named 'Test' is defined.
+Within the 'Test' stage, the node --version command is executed to check the Node.js version.
+Key Points:
+
+Docker Container: The Docker container provides a clean and isolated environment for running the script.
+Node.js Version: The node:16.13.1-alpine image ensures that the specific version of Node.js is available.
+Shell Command: The sh step allows you to execute shell commands within the pipeline.
